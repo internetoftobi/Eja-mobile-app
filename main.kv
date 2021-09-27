@@ -1,0 +1,335 @@
+WindowManager:
+    ConnectWindow:
+
+    MenuWindow:
+
+    MapWindow:
+
+    DeployTimeWindow:
+
+    GatewayWindow:
+
+    NodeWindow:
+
+<RoundedButton>
+    background_color: (0, 0, 0, 0)
+    canvas.before:
+        Color:
+            rgba: (.1,.6,.2,0.7) if self.state=='normal' else (.0,.5,.3,1)  # visual feedback of press
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [50,]
+<RoundedLabel>
+    background_color: (0, 0, 0, 0)
+    border_color: (0, 0, 0, 1)
+    canvas.before:
+        Color:
+            rgba: (.1,.8,.2,0.7)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [50,]
+<WhiteScreen>
+    canvas.before:
+        Color:
+            rgba: (0.95, 0.95, 0.95, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+<ConnectWindow>
+    connecting_label: connecting_label
+    connecting_button: connecting_button
+    splitter: splitter
+
+    name: "connect"
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        padding: 50
+        spacing: 50
+        Label:
+            text: "Welcome to EJA Config"
+            color: (0, 0, 0, 1)
+            font_size: 40
+        Label:
+            text: "E J A"
+            color: (0.1, 0.8, 0.4, 0.9)
+            font_size: 100
+
+        RoundedButton:
+            id: connecting_button
+            text: "Connect"
+            font_size: 40
+            on_release:
+                root.btn()
+                app.btn_connect()
+                app.root.current = "menu" if root.connected == True else "connect"
+                root.manager.transition.direction = "left"
+        Splitter:
+            id: splitter
+            visible: True
+            size_hint_x: 1 if self.visible else 0
+            opacity: 1 if self.visible else 0
+            disabled: not self.visible
+        RoundedLabel:
+            id: connecting_label
+            visible: not splitter.visible
+            size_hint_x: 1 if self.visible else 0
+            opacity: 1 if self.visible else 0
+            disabled: not self.visible
+            font_size: 30
+<MenuWindow>
+    name: "menu"
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        padding: 50
+        spacing: 50
+        Label:
+            text: "E J A"
+            color: (0.1, 0.8, 0.4, 0.9)
+            font_size: 100
+        GridLayout:
+            cols: 2
+            spacing: 20, 20
+            padding: 20, 20
+            RoundedButton:
+                id: ping_gt_btn
+                text: "PING GATEWAY"
+                font_size: 16
+                on_release:
+                    app.start_gateway_screen()
+                    app.root.current = "gateway"
+                    root.manager.transition.direction = "left"
+            RoundedButton:
+                id: ping_by_btn
+                text: "TEST BUOY"
+                font_size: 16
+            RoundedButton:
+                id: deploy_btn
+                text: "DEPLOY TIME"
+                font_size: 16
+                on_release:
+                    app.root.current = "deploy"
+                    root.manager.transition.direction = "left"
+            RoundedButton:
+                id: logs_btn
+                text: "BUOY LOGS"
+                font_size: 16
+                on_release:
+                    app.start_node_screen()
+                    app.root.current = "node"
+                    root.manager.transition.direction = "left"
+        RoundedButton:
+            id: track_btn
+            text: "TRACK BUOY"
+            font_size: 16
+            size_hint: 0.5, 0.5
+            pos_hint: {"x": 0.25}
+            on_release:
+                app.start_node_screen()
+                app.root.current = "map"
+                root.manager.transition.direction = "left"
+<MapWindow>
+    map_view: map_view
+    name: "map"
+    on_enter: root.start_data_update()
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        padding: 20
+        spacing: 10
+        MapView:
+            id: map_view
+            zoom: 5
+            size_hint: 1.0, 0.8
+        RoundedButton:
+            id: back_btn
+            text: "BACK"
+            font_size: 40
+            size_hint: 0.8, 0.2
+            pos_hint: {"x": 0.1}
+            on_release:
+                root.stop_data_update()
+                app.stop_node_screen()
+                app.root.current = "menu"
+                root.manager.transition.direction = "right"
+<GatewayWindow>
+    gt_lab: gt_lab
+    rssi_lab: rssi_lab
+    con_lab: con_lab
+    timer_lab: timer_lab
+    name: "gateway"
+    on_enter: root.start_data_update()
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        padding: 40
+        spacing: 20
+
+        GridLayout:
+            cols: 2
+            padding: 20, 20
+            spacing: 15, 15
+            Label:
+                color: (0, 0, 0 , 1)
+                font_size: 18
+                text: "Gateway name:"
+            Label:
+                color: (0, 0, 0 , 1)
+                id: gt_lab
+                font_size: 18
+            Label:
+                color: (0, 0, 0 , 1)
+                font_size: 18
+                text: "RSSI: "
+            Label:
+                color: (0, 0, 0 , 1)
+                id: rssi_lab
+                font_size: 18
+            Label:
+                color: (0, 0, 0 , 1)
+                font_size: 18
+                text: "Connected:"
+            Label:
+                color: (0, 0, 0 , 1)
+                id: con_lab
+                font_size: 18
+            Label:
+                color: (0, 0, 0 , 1)
+                font_size: 18
+                text: "Gateway Time:"
+            Label:
+                color: (0, 0, 0 , 1)
+                id: timer_lab
+                font_size: 18
+        RoundedButton:
+            text: "BACK"
+            font_size: 30
+            size_hint: 0.8, 0.2
+            pos_hint: {"x": 0.1}
+            on_release:
+                app.stop_gateway_screen()
+                root.stop_data_update()
+                app.root.current = "menu"
+                root.manager.transition.direction = "right"
+<NodeWindow>
+    gps_lab: gps_lab
+    node_ts_lab: node_ts_lab
+    btr_lab: btr_lab
+    name: "node"
+    on_enter: root.start_data_update()
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        padding: 40
+        spacing: 20
+        GridLayout:
+            cols: 2
+            padding: 20, 20
+            spacing: 15, 15
+            Label:
+                color: (0, 0, 0 , 1)
+                font_size: 18
+                text: "GPS:"
+            Label:
+                color: (0, 0, 0 , 1)
+                id: gps_lab
+                font_size: 18
+            Label:
+                color: (0, 0, 0 , 1)
+                font_size: 18
+                text: "Battery:"
+            Label:
+                color: (0, 0, 0 , 1)
+                id: btr_lab
+                font_size: 18
+            Label:
+                color: (0, 0, 0 , 1)
+                font_size: 18
+                text: "Node Timer:"
+            Label:
+                color: (0, 0, 0 , 1)
+                id: node_ts_lab
+                font_size: 18
+        RoundedButton:
+            text: "BACK"
+            font_size: 30
+            size_hint: 0.8, 0.2
+            pos_hint: {"x": 0.1}
+            on_release:
+                app.stop_node_screen()
+                root.stop_data_update()
+                app.root.current = "menu"
+                root.manager.transition.direction = "right"
+<DeployTimeWindow>
+    time_label: time_label
+    name: "deploy"
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        padding: 30
+        spacing: 20
+        Label:
+            color: (0, 0, 0, 1)
+            font_size: 40
+            text: "Deploy time"
+        Label:
+            color: (0, 0, 0, 1)
+            font_size: 50
+            id: time_label
+            text: "00:00:00"
+        GridLayout:
+            cols: 3
+            padding: 10, 10
+            spacing: 10, 10
+            RoundedButton:
+                font_size: 16
+                text: "UP"
+                on_press:
+                    root.hour_inc()
+            RoundedButton:
+                font_size: 16
+                text: "UP"
+                on_press:
+                    root.min_inc()
+            RoundedButton:
+                font_size: 16
+                text: "UP"
+                on_press:
+                    root.sec_inc()
+            RoundedButton:
+                font_size: 16
+                text: "DOWN"
+                on_press:
+                    root.hour_dec()
+            RoundedButton:
+                font_size: 16
+                text: "DOWN"
+                on_press:
+                    root.min_dec()
+            RoundedButton:
+                font_size: 16
+                text: "DOWN"
+                on_press:
+                    root.sec_dec()
+        RoundedButton:
+            font_size: 15
+            text: "SEND TIME"
+            size_hint: 0.5, 0.25
+            pos_hint: {"x": 0.25}
+            on_press:
+                app.send_new_timer()
+                root.zero_values()
+        RoundedButton:
+            font_size: 15
+            text: "BACK"
+            size_hint: 0.5, 0.25
+            pos_hint: {"x": 0.25}
+            on_release:
+                app.root.current = "menu"
+                root.manager.transition.direction = "right"
