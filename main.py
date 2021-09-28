@@ -9,7 +9,9 @@ from threading import Thread
 from time import time
 from ble import BLE
 
-android_device = False
+__version__ = "1.0"
+
+android_device = True
 new_time = 0
 connected = 0
 gateway_data = {"name": "No data", "rssi": "No data", "connected": "False", "gateway timer": "No data"}
@@ -89,11 +91,6 @@ class MapWindow(WhiteScreen):
                         self.map_view.add_marker(m1)
                     except Exception as e:
                         print(type(e), e)
-                else:
-                    lat = 	48.864716
-                    lon = 	2.349014
-                    m1 = MapMarker(lat=lat, lon=lon)
-                    self.map_view.add_marker(m1)
 
     def stop_data_update(self):
         self.data_update = False
@@ -241,6 +238,7 @@ class MapViewApp(App):
     def build(self):
         if android_device:
             self.ble = BLE()
+            print(self.ble)
         return kv
 
     def btn_connect(self):

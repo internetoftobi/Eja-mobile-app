@@ -1,4 +1,4 @@
-from able.able import BluetoothDispatcher, GATT_SUCCESS
+from able import BluetoothDispatcher, GATT_SUCCESS
 from time import time
 
 
